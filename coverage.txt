@@ -1,0 +1,8 @@
+mode: set
+github.com/qri-io/didmod/file.go:37.53,39.16 2 1
+github.com/qri-io/didmod/file.go:43.2,43.34 1 1
+github.com/qri-io/didmod/file.go:39.16,41.3 1 1
+github.com/qri-io/didmod/file.go:48.45,56.48 2 1
+github.com/qri-io/didmod/file.go:62.2,62.10 1 1
+github.com/qri-io/didmod/file.go:56.48,60.3 3 1
+github.com/qri-io/didmod/file.go:66.36,73.2 1 1
