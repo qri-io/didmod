@@ -17,8 +17,6 @@ package didmod
 import (
 	"os"
 	"time"
-
-	"syscall"
 )
 
 // Props are tracked properties of a file used for checking for changes
@@ -28,9 +26,10 @@ type Props struct {
 	Size  int64       `json:"size,omitempty"`
 	Mode  os.FileMode `json:"mode,omitempty"`
 
-	Inode uint64 `json:"inode,omitempty"`
-	UID   uint32 `json:"uid,omitempty"`
-	GID   uint32 `json:"gid,omitempty"`
+	Inode   uint64 `json:"inode,omitempty"`
+	Volume  uint32 `json:"volume",omitempty"`
+	UserID  uint32 `json:"userid,omitempty"`
+	GroupID uint32 `json:"groupid,omitempty"`
 }
 
 // NewProps constructs Props by 'stat'-ing a file
@@ -39,26 +38,19 @@ func NewProps(filename string) (p Props, err error) {
 	if err != nil {
 		return p, err
 	}
-
-	return NewPropsFileInfo(fi), nil
+	return NewPropsFileInfo(filename, fi), nil
 }
 
 // NewPropsFileInfo constructs props from an os.FileInfo, filling in as many
 // fields as possible
-func NewPropsFileInfo(fi os.FileInfo) Props {
+func NewPropsFileInfo(filename string, fi os.FileInfo) Props {
 	p := Props{
 		Name:  fi.Name(),
 		Size:  fi.Size(),
 		Mtime: fi.ModTime().In(time.UTC),
 		Mode:  fi.Mode(),
 	}
-
-	if stat, ok := fi.Sys().(*syscall.Stat_t); ok {
-		p.Inode = stat.Ino
-		p.UID = stat.Uid
-		p.GID = stat.Gid
-	}
-
+	p.Inode, p.Volume, p.UserID, p.GroupID = GetIds(filename, fi)
 	return p
 }
 
@@ -67,7 +59,8 @@ func (p Props) Equal(b Props) bool {
 	return p.Mtime == b.Mtime &&
 		p.Size == b.Size &&
 		p.Inode == b.Inode &&
+		p.Volume == b.Volume &&
 		p.Mode == b.Mode &&
-		p.UID == b.UID &&
-		p.GID == b.GID
+		p.UserID == b.UserID &&
+		p.GroupID == b.GroupID
 }

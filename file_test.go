@@ -35,7 +35,7 @@ func TestPropsEqual(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	b := NewPropsFileInfo(fi)
+	b := NewPropsFileInfo(filename, fi)
 
 	if !p.Equal(b) {
 		diff := cmp.Diff(p, b)
